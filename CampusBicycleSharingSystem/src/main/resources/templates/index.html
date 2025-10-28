@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Bicycle Sharing System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8bbd9 0%, #c8a2c8 50%, #87ceeb 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        header h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        .nav-buttons a {
+            background-color: #81c784;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .nav-buttons a:hover {
+            background-color: #66bb6a;
+        }
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .welcome-section {
+            background: rgba(248, 187, 217, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+        .welcome-section h2 {
+            color: #7986cb;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        .welcome-section p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .stat-card {
+            background: #a9a9a9;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-card h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .stat-card p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .stations-section {
+            background: rgba(135, 206, 235, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+        .stations-section h3 {
+            color: #7986cb;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        .station-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .station-item {
+            background: rgba(200, 162, 200, 0.3);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #c8a2c8;
+        }
+        .station-item h4 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .station-item p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        footer {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚴 Campus Bicycle Sharing System</h1>
+        <div class="nav-buttons">
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h2>Welcome to Campus Bike Share</h2>
+            <p>Share bicycles across campus conveniently. Register today and start your journey!</p>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <h3 th:text="${stations.size()}">0</h3>
+                    <p>Active Stations</p>
+                </div>
+                <div class="stat-card">
+                    <h3 th:text="${availableBikes.size()}">0</h3>
+                    <p>Available Bikes</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="stations-section" th:if="${!stations.isEmpty()}">
+            <h3>📍 Available Stations</h3>
+            <div class="station-list">
+                <div class="station-item" th:each="station : ${stations}">
+                    <h4 th:text="${station.name}">Station Name</h4>
+                    <p th:text="'Location: ' + ${station.location}">Location</p>
+                    <p th:text="'Capacity: ' + ${station.capacity} + ' bikes'">Capacity</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Campus Bicycle Sharing System. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+

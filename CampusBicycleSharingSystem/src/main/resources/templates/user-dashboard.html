@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Campus Bicycle Sharing System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8bbd9 0%, #c8a2c8 50%, #87ceeb 100%);
+            min-height: 100vh;
+        }
+        header {
+            background: #a8d8ea;
+            color: #2c3e50;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            font-size: 24px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .user-info span {
+            font-size: 14px;
+        }
+        .logout-btn {
+            background-color: #f8b4cb;
+            color: #2c3e50;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .logout-btn:hover {
+            background-color: #f48fb1;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .section {
+            background: rgba(248, 187, 217, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #7986cb;
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 2px solid #c5cae9;
+            padding-bottom: 10px;
+        }
+        .bike-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .bike-card {
+            background: rgba(135, 206, 235, 0.4);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #c8e6c9;
+            transition: transform 0.3s;
+        }
+        .bike-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .bike-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .bike-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .status.available {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        .status.booked {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .book-btn {
+            background-color: #81c784;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            font-weight: bold;
+        }
+        .book-btn:hover {
+            background-color: #66bb6a;
+        }
+        .booking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .booking-table th {
+            background: #a9a9a9;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .booking-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        .booking-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚴 Campus Bicycle Sharing System</h1>
+        <div class="user-info">
+            <span th:text="'Welcome, ' + ${userName}">Welcome, User</span>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Success Message -->
+        <div th:if="${param.success}" class="section" style="background-color: #e8f5e8; border-left: 4px solid #4caf50; color: #2e7d32;">
+            <strong>✅ Success:</strong> 
+            <span th:if="${param.success[0] == 'booking'}">Your booking has been confirmed successfully!</span>
+        </div>
+
+        <div class="section">
+            <h2>📍 Available Bicycles</h2>
+            <div th:if="${!availableBikes.isEmpty()}" class="bike-grid">
+                <div class="bike-card" th:each="bike : ${availableBikes}">
+                    <h4 th:text="'Bike: ' + ${bike.bikeCode}">Bike Code</h4>
+                    <p th:text="'Type: ' + ${bike.type}">Type</p>
+                    <p th:text="'Station: ' + ${bike.currentStation.name}">Station</p>
+                    <span class="status available">Available</span>
+                    <form th:action="@{/booking}" method="get">
+                        <input type="hidden" name="bikeId" th:value="${bike.bikeId}">
+                        <button type="submit" class="book-btn">Book Now</button>
+                    </form>
+                </div>
+            </div>
+            <div th:if="${availableBikes.isEmpty()}" class="empty-message">
+                No bicycles available at the moment. Please check back later.
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📋 Your Booking History</h2>
+            <div th:if="${!userBookings.isEmpty()}">
+                <table class="booking-table">
+                    <thead>
+                        <tr>
+                            <th>Bike Code</th>
+                            <th>Station</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Duration (min)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="booking : ${userBookings}">
+                            <td th:text="${booking.bicycle.bikeCode}">Bike Code</td>
+                            <td th:text="${booking.station.name}">Station</td>
+                            <td th:text="${#temporals.format(booking.startTime, 'dd-MM-yyyy HH:mm')}">Start</td>
+                            <td th:text="${booking.endTime != null ? #temporals.format(booking.endTime, 'dd-MM-yyyy HH:mm') : 'N/A'}">End</td>
+                            <td th:text="${booking.durationMin != null ? booking.durationMin : 'N/A'}">Duration</td>
+                            <td th:text="${booking.status}">Status</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${userBookings.isEmpty()}" class="empty-message">
+                You haven't made any bookings yet. Start by booking a bicycle!
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
